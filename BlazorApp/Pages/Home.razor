@@ -1,0 +1,54 @@
+﻿@page "/"
+@using BlazorApp.Services
+
+@inject MessageService MessageService
+
+<h3>Envoyer un Message</h3>
+
+<div>
+    <label>Username:</label>
+    <input @bind="Username" />
+</div>
+
+<div>
+    <label>Message:</label>
+    <textarea @bind="MessageContent"></textarea>
+</div>
+
+<button @onclick="SendMessage">Envoyer</button>
+
+@if (IsSuccess)
+{
+    <p style="color: green;">Message envoyé avec succès !</p>
+}
+
+@if (HasError)
+{
+    <p style="color: red;">Erreur lors de l'envoi du message.</p>
+}
+
+@code {
+    private string Username { get; set; } = "";
+    private string MessageContent { get; set; } = "";
+    private bool IsSuccess { get; set; } = false;
+    private bool HasError { get; set; } = false;
+
+    private async Task SendMessage()
+    {
+        IsSuccess = false;
+        HasError = false;
+
+        bool result = await MessageService.SendMessageAsync(Username, MessageContent);
+
+        if (result)
+        {
+            IsSuccess = true;
+            Username = "";
+            MessageContent = "";
+        }
+        else
+        {
+            HasError = true;
+        }
+    }
+}
